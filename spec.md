@@ -196,9 +196,15 @@ Insetad, for each WARC record, verify the hash of the loaded WARC record with th
 If using a compressed CDXJ index, also verify the hash of each compressed CDXJ block with the IDX index.
 (See the CDXJ specification for more details).
 
-## Implementation
+## Implementations
 
-The [authsign]() library provides an HTTP-based API for creating and validating a WACZ `signatureData`. The library uses the LetsEncrypt service to generate a domain certificate on-demand, and the [FreeTSA](https://freetsa.org/index_en.php) timestamping service to generate an RFC 3161 timestamp.
+Implementations of this spec exist in the following tools:
+
+* The [authsign](https://github.com/webrecorder/authsign) library provides an HTTP-based API for creating and validating a WACZ `signatureData` for the domain-name identity + timestamp approach. This  library uses the LetsEncrypt service to generate a domain certificate on-demand, and the [FreeTSA](https://freetsa.org/index_en.php) timestamping service to generate an RFC 3161 timestamp.
+
+* The [py-wacz](https://github.com/webrecorder/py-wacz) CLI tool can be used to generate and validate WACZ file with domain-name identity + timestamp, by either connecting to a `authsign` server via API for signing, or for validating directly via the CLI.
+
+* The [ArchiveWeb.page](https://archiveweb.page) extension produces signed WACZ files with an anonymous `signatureData`. The publicKey is not yet distributed outside the extension.
 
 
 ### Acknowledgments
