@@ -153,8 +153,52 @@ Establishing this secure connection is beyond the scope of this specification.
 
 ## Verification
 
+Verification of a signed WACZ can involve the following steps:
+
+1) Validate the WACZ as a Frictionless Data Package, ensuring the `datapackage.json` hashes match the contents.
+2) Validate that the `hash` in `datapackage-digest.json` matches `datapackage.json`.
+
+### Anonymous Signature Validation
+
+Given an anonymous `signatureData` with only a publicKey:
+
+3) Validate the `signature` of the specified `hash` with the `publicKey`.
+
+The WACZ file is thus valid, but publicKey must be validated using external mechanisms.
+
+### Domain-Name Identity + Timestamp Validation.
+
+Given a signature data with domain-name signature + timestamp, the validation is as follows:
+
+3) Read the first certificate in `domainCert` certificate chain and validate that `signature` is a valid signature of `hash` using the public key
+of the certificate.
+4) Verify that the `domain` matches the subjectName of the `domainCert` TLS certificate.
+5) Read the first certificate of `timestampCert` certificate chain and validate that the `timeSignature` is a valid RFC 3161 timestamp signature of 
+`signature`
+6) Validate that the `created` date is within 10 minutes of the signed timestamp in `timeSignature`
+7) Verify trust of the `domainCert` certificate chain by checking trusted root list. (Optionally, check for certificate revokation in Certificate Transparency logs).
+8) Verify trust of the `timestampCert` certificate chain by checking trusted root list.
+9) Optional: if `crossSignedCert` is provided, check that it has same public key as `domainCert`, and check this chain in trusted root list. Or, if `domainCert` is not trusted, use this trust path instead of `domainCert`.
 
 
+### Verification of Partially loaded WACZ
+
+The verification process above assumes a fully loaded WACZ file. However, WACZ format supports partial loading of individual HTTP responses (via WARC records) on demand.
+
+For partial/on-demand loading, step 1) is modified as WARC files are not fully loaded and can not be validated against the hash.
+
+Insetad, for each WARC record, verify the hash of the loaded WARC record with the hash specified in the CDXJ index.
+If using a compressed CDXJ index, also verify the hash of each compressed CDXJ block with the IDX index.
+(See the CDXJ specification for more details).
+
+## Implementation
+
+The [authsign]() library provides an HTTP-based API for creating and validating a WACZ `signatureData`. The library uses the LetsEncrypt service to generate a domain certificate on-demand, and the [FreeTSA](https://freetsa.org/index_en.php) timestamping service to generate an RFC 3161 timestamp.
+
+
+### Acknowledgments
+
+The development of this specification was supported by and developed in collaboration with Harvard Law Library Innovation Lab (Harvard LIL).
 
 
 
