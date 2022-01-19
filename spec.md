@@ -18,22 +18,24 @@ To increase trust in web archives, it becomes necessary to guarantee certain pro
 ### Provenance of Authenticity
 
 Proving web archive authenticity can be difficult. Ideally, proof of authenticity could guarantee that any web server served a particular URL at a particular point in time.
-Unfortunately, this is not currently possible with existing web standards, even with TLS, as TLS does not provide "non-repudiation".
+Unfortunately, this is not currently possible with existing web standards, as even TLS does not provide "non-repudiation".
 
-There are proposals, such as [signed exchanges](https://wicg.github.io/webpackage/draft-yasskin-http-origin-signed-responses.html), which provide new ways for web servers to serve content that could later be verified. This requires additional support for nwe formats on the HTTP/S server.
+There are proposals, such as [signed exchanges](https://wicg.github.io/webpackage/draft-yasskin-http-origin-signed-responses.html), which provide new ways for web servers to serve content that could later be verified. However, this requires HTTPS servers to support a new protocol and format.
 
-The goal of this specification is to provide a way for a client that is creating a web archive to add authentication information. As such, this must work with archives of any HTTP and HTTPS web content.
+A web archive can can be created by any HTTP client that is capable of recording its end of the HTTP network traffic. The goal of this specification is to provide a way for a client that creates a web archive and stores it in the WACZ format to also add authentication information.
 
-This proposal will provide a mechanism to prove:
-- who created a web archive
-- when the web archive was created.
+This proposal will provide a mechanism to authenticate:
+- an identity for the creator of the web archive
+- a timestap for when the web archive was created
 
-This requires trusting the client or a trusted third party to create the web archive. This proposal does not make any guarantees from the perspective of the web server serving the content, as this is not currently possible.
+This approach requires trusting the client, and possible trusted third party 'observer' that signs the web archive.
+
+(This proposal does not make any guarantees from the perspective of the web server serving the content, as this is not currently possible with HTTP/S)
 
 
 ## WACZ Signature File and Format
 
-The WACZ format builds on top of the Frictionless Data Package. The data package includes a manifest `datapackage.json` file which contains the hashes of all the files in the data package.
+The WACZ format builds on top of the [Frictionless Data Package](https://specs.frictionlessdata.io/data-package/). The data package includes a manifest `datapackage.json` file which contains the hashes of all the files in the data package.
 
 A signed WACZ also contains a `datapackage-digest.json`, which contains a hash and signature of the `datapackage.json`
 
@@ -78,7 +80,7 @@ which can be validated by publicly available certificates.
 }
 ```
 
-With this approach, the WACZ contains just enough to validate that they signature with the publicKey.
+With this approach, the WACZ contains just enough to validate that they signature with the `publicKey`.
   
 To validate authorship of the WACZ, external key management is required, and this signature is otherwise anonymous.
   
@@ -139,8 +141,8 @@ With this approach, the client must distribute its public key out-of-band to mak
 
 To create the signatureData in the second example, the client must perform the following:
 
-1) Generate a private ECDSA keypair
-2) Create a Certificate Request signed by the private key
+1) Generate a ECDSA private key.
+2) Create a Certificate Request signed by the private key.
 3) Receive a TLS certificate for its CSR from a trusted CA, such as LetsEncrypt.
 4) Optionally: use a second CA (such as a private self-signed CA) to generate a second cross-signed certificate as backup.
 5) Sign the hash using its private key to generate the first signature (signature)
