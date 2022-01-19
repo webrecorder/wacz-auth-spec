@@ -1,10 +1,10 @@
-# Introduction
+## Introduction
 
 This document is a working draft for a proposal to create signed WACZ packages which allow the packages author to be cryptographically proven.
 
 The specification is an addendum to he main [WACZ Specification](https://webrecorder.github.io/wacz-spec/)
 
-## Motivation
+### Motivation
 
 The purpose of this specification is to provide an optional mechanism to make web archives bundled in WACZ more trusted.
 
@@ -12,7 +12,7 @@ The WACZ format provides a way to create portable web archives and distribute th
 
 To increase trust in web archives, it becomes necessary to guarantee certain properties about who the web archive was created and when.
 
-## Provenance of Authenticity
+### Provenance of Authenticity
 
 Proving web archive authenticity can be difficult. Ideally, proof of authenticity could guarantee that any web server served a particular URL at a particular point in time.
 Unfortunately, this is not currently possible with existing web standards, even with TLS, as TLS does not provide "non-repudiation".
@@ -57,7 +57,7 @@ which can be validated by publicly available certificates.
 
 #### Anonymous Signature
 
-```json
+```
 {
     // input hash to sign
     "hash": "<sha256 hash of datapackage.json>,
@@ -82,7 +82,7 @@ To validate authorship of the WACZ, external key management is required, and thi
 Currently, this approach is used in decentralized tooling, such as the ArchiveWeb.page extension.
   
 
-#### Observer Attestation: Domain-Ownership Identity + Signed Timestamp
+#### Domain-Ownership Identity + Signed Timestamp
 
 ```
 {
@@ -120,6 +120,8 @@ For additional verification, an optional `crossSignedCert` can be provided which
 certificate has been found to be compromised for any reason. The cross-signed certificate simply provides a way to provide an alternative trust path 
 not tied to the domainCert, if it becomes needed for any reason.
 
+The `domainCert`, `timestampCert`, and `crossSignedCert` should include the full certificate chain to aide in validation.
+
 ## Signing
 
 To generate the `signatureData`, the creator of the WACZ can perform the following steps.
@@ -148,6 +150,8 @@ to the attestation server which is running on the designated domain and can obse
 Access to the attestation server must be restricted to trusted creator of the WACZ.
 Establishing this secure connection is beyond the scope of this specification.
 
+
+## Verification
 
 
 
