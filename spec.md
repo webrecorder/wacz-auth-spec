@@ -1,3 +1,6 @@
+# WACZ Signing/Verification Specification 0.1.0
+
+
 ## Introduction
 
 This document is a working draft for a proposal to create signed WACZ packages which allow the packages author to be cryptographically proven.
