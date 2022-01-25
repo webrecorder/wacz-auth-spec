@@ -155,6 +155,17 @@ to the attestation server which is running on the designated domain and can obse
 Access to the attestation server must be restricted to trusted creator of the WACZ.
 Establishing this secure connection is beyond the scope of this specification.
 
+### Certificate Rotation
+
+To minimize risk, a new certificate should be rotated at regular intervals.
+
+Current implementations rotate the certificate
+within 48 hours (as this falls within the weekly limit allowed by LetsEncrypt).
+
+This can be used to impose a more strict verification requirement, eg. while the TLS may be valid for TLS for several months,
+for purposes of the WACZ validation, the certificate must be used within 48 hours of its creation, and a new certificate
+must be created after that.
+
 
 ## Verification
 
@@ -178,12 +189,13 @@ Given a signature data with domain-name signature + timestamp, the validation is
 3) Read the first certificate in `domainCert` certificate chain and validate that `signature` is a valid signature of `hash` using the public key
 of the certificate.
 4) Verify that the `domain` matches the subjectName of the `domainCert` TLS certificate.
-5) Read the first certificate of `timestampCert` certificate chain and validate that the `timeSignature` is a valid RFC 3161 timestamp signature of 
+5) Verify that the TLS certificate used is no older than a time range, eg. used within 48-hours of its 'not valid before' date. (recommended).
+6) Read the first certificate of `timestampCert` certificate chain and validate that the `timeSignature` is a valid RFC 3161 timestamp signature of 
 `signature`
-6) Validate that the `created` date is within 10 minutes of the signed timestamp in `timeSignature`
-7) Verify trust of the `domainCert` certificate chain by checking trusted root list. (Optionally, check for certificate revokation in Certificate Transparency logs).
-8) Verify trust of the `timestampCert` certificate chain by checking trusted root list.
-9) Optional: if `crossSignedCert` is provided, check that it has same public key as `domainCert`, and check this chain in trusted root list. Or, if `domainCert` is not trusted, use this trust path instead of `domainCert`.
+7) Validate that the `created` date is within 10 minutes of the signed timestamp in `timeSignature`
+8) Verify trust of the `domainCert` certificate chain by checking trusted root list. (Optionally, check for certificate revokation in Certificate Transparency logs).
+9) Verify trust of the `timestampCert` certificate chain by checking trusted root list.
+10) Optional: if `crossSignedCert` is provided, check that it has same public key as `domainCert`, and check this chain in trusted root list. Or, if `domainCert` is not trusted, use this trust path instead of `domainCert`.
 
 
 ### Verification of Partially loaded WACZ
@@ -210,6 +222,7 @@ Implementations of this spec exist in the following tools:
 ### Acknowledgments
 
 The development of this specification was supported by and developed in collaboration with Harvard Law Library Innovation Lab (Harvard LIL).
+Jack Cushman (@jcushman) of LIL in particular contributed to the development of this specification.
 
 
 
