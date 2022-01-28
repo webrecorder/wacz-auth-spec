@@ -204,7 +204,7 @@ The verification process above assumes a fully loaded WACZ file. However, WACZ f
 
 For partial/on-demand loading, step 1) is modified as WARC files are not fully loaded and can not be validated against the hash.
 
-Insetad, for each WARC record, verify the hash of the loaded WARC record with the hash specified in the CDXJ index.
+Instead, for each WARC record, verify the hash of the loaded WARC record with the hash specified in the CDXJ index.
 If using a compressed CDXJ index, also verify the hash of each compressed CDXJ block with the IDX index.
 (See the CDXJ specification for more details).
 
