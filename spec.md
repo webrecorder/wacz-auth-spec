@@ -26,7 +26,7 @@ A web archive can can be created by any HTTP client that is capable of recording
 
 This proposal will provide a mechanism to authenticate:
 - an identity for the creator of the web archive
-- a timestap for when the web archive was created
+- a timestamp for when the web archive was created
 
 This approach requires trusting the client, and possible trusted third party 'observer' that signs the web archive.
 
@@ -193,7 +193,7 @@ of the certificate.
 6) Read the first certificate of `timestampCert` certificate chain and validate that the `timeSignature` is a valid RFC 3161 timestamp signature of 
 `signature`
 7) Validate that the `created` date is within 10 minutes of the signed timestamp in `timeSignature`
-8) Verify trust of the `domainCert` certificate chain by checking trusted root list. (Optionally, check for certificate revokation in Certificate Transparency logs).
+8) Verify trust of the `domainCert` certificate chain by checking trusted root list. (Optionally, check for certificate revocation in Certificate Transparency logs).
 9) Verify trust of the `timestampCert` certificate chain by checking trusted root list.
 10) Optional: if `crossSignedCert` is provided, check that it has same public key as `domainCert`, and check this chain in trusted root list. Or, if `domainCert` is not trusted, use this trust path instead of `domainCert`.
 
